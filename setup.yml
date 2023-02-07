@@ -1,33 +1,40 @@
 ---
 
-- name: install some packages
+- name: update system
+  become: true
   hosts: all
-  become: yes
   tasks:
-  - name: Install a list of packages
-    ansible.builtin.apt:
-      update_cache: yes
-      autoclean: yes
-      pkg:
-      - nginx
-      - docker.io
-      - curl
+    - apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400
+        autoclean: yes
 
+- name: Install daily tools
+  become: true
+  hosts: all
+  tasks:
+    - apt:
+        name:
+            - curl
+            - nginx
+            - docker.io
+        state: present
 
-  - name: create deploy user
-    hosts: webserver
-    become: yes
-    tasks:
-      - ansible.builtin.user:
-          name: deploy
-          shell: /bin/bash
-          groups: docker
-          append: yes
+- name: setup webserver
+  become: true
+  hosts: webserver
+  tasks:
+    - ansible.builtin.user:
+      user:
+        name: "deploy"
+        append: yes
+        groups: docker
 
-      - name: Set authorized key taken from file
-        ansible.posix.authorized_key:
-          user: deploy
-          state: present
-          key: "{{ lookup ('file', './serdarkey.pub') }}"
+    - name: Set authorized key took from file 
+      ansible.posix.authorized_key:
+        user: deploy
+        state: present
+        key: "{{ lookup('file', './serdarkey') }}"
 
   
