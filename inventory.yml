@@ -8,8 +8,8 @@ all:
     jenkins:
       hosts:
         "jenkins-tsserdar.ddns.net":
-          ansible_host: 20.16.226.135
+          ansible_host: 20.23.237.91
     webserver:
       hosts:
         "webserver-ts.ddns.net":
-          ansible_host: 108.142.127.253
+          ansible_host: 20.23.237.92
